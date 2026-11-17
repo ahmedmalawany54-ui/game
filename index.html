@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>MSI Dragon Virus Slayer — Ultimate 20-Stage Pixel Adventure</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div id="gameContainer">
+  <canvas id="gameCanvas" width="1280" height="720"></canvas>
+
+  <!-- Start Overlay -->
+  <div id="startScreen" class="overlay">
+    <div class="title-box">
+      <div class="msi-logo-header">
+        <img class="msi-shield-svg" src="msi-dragon-logo.png" alt="MSI Dragon Shield" />
+        <span>MSI GAMING OFFICIAL EDITION</span>
+      </div>
+      <h1>DRAGON <span>VIRUS SLAYER</span></h1>
+      <p class="subtitle">20 UNIQUE STAGES • 3-FLOOR ROUTES • EVOLVING DRAGON • BOSS INTEL MOTION GRAPHICS</p>
+      
+      <div class="features-grid">
+        <div>🦠 <b>CYBER VIRUS ENEMIES:</b> High-detail digital viruses (Trojans, Worms, Ransomware) with glowing circuits!</div>
+        <div>🐉 <b>EVOLVING DRAGON:</b> Fluid Captain-Claw style movement! Grows larger with horns, armor, and golden flames as you progress!</div>
+        <div>🎹 <b>DYNAMIC SOUNDTRACK:</b> Unique synth music per level that speeds up and intensifies as you near the Stage Boss!</div>
+        <div>🖥️ <b>DEDICATED HARDWARE STAGES:</b> Every component (Case, RAM, Cooler, small GPU -> RTX 5090) has its own full stage!</div>
+        <div>🧬 <b>THREE-FLOOR CHALLENGE:</b> Climb maintenance decks, circuit bridges, and upper boss approaches using ladders and moving elevators.</div>
+        <div>📡 <b>BOSS INTEL:</b> Entering every boss sector reveals its unique ability, weakness, mythic origin, and the stolen PC component.</div>
+      </div>
+
+      <div class="btn-group">
+        <button id="btnStart" class="btn-red">START GAME ►</button>
+        <button id="btnContinue" class="btn-dark hidden">CONTINUE SAVE</button>
+      </div>
+
+      <div class="keys-hint">
+        <span><b>A/D or ◄/►</b> Run</span>
+        <span><b>W / SPACE / ENTER</b> Climb Up</span>
+        <span><b>S / ▼</b> Climb Down</span>
+        <span><b>[1]</b> Fire / Lightning</span>
+        <span><b>[2]</b> Dragon Claw</span>
+        <span><b>[3]</b> Nova Explosion</span>
+        <span><b>[I]</b> PC Cabinet</span>
+        <span><b>[M]</b> Shop</span>
+        <span><b>[B]</b> Next Stage Gate</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Over Overlay -->
+  <div id="gameOverScreen" class="overlay hidden">
+    <div class="title-box center-box">
+      <h1 class="danger-text">GAME OVER</h1>
+      <p class="subtitle">SYSTEM CORRUPTED BY CYBER VIRUSES!</p>
+      <p id="gameOverStats" class="modal-desc">You fell in battle. Your dragon is ready to rise again.</p>
+      <div class="btn-group center-btns">
+        <button id="btnRetryStage" class="btn-red">RETRY STAGE ↻</button>
+        <button id="btnBackToTitle" class="btn-dark">MAIN MENU</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Congratulations / Victory Overlay -->
+  <div id="congratsScreen" class="overlay hidden">
+    <div class="title-box center-box congrats-box">
+      <div class="msi-logo-header" style="margin: 0 auto;">
+        <span>MSI MISSION ACCOMPLISHED</span>
+      </div>
+      <h1 class="gold-text">CONGRATULATIONS!</h1>
+      <p id="congratsSubtitle" class="subtitle">HARDWARE COMPONENT ACQUIRED &amp; STAGE CLEARED!</p>
+      
+      <div id="congratsPartCard" class="congrats-card">
+        <div id="congratsIcon" class="part-badge">🖥️</div>
+        <div>
+          <h3 id="congratsPartName">MSI MEG PROSPECT CASE</h3>
+          <p id="congratsPartDesc">Component successfully secured and mounted into your PC Cabinet!</p>
+        </div>
+      </div>
+
+      <div id="finalPcShowcase" class="pc-victory hidden">
+        <h3>🏆 ULTIMATE MSI SUPRIM TITAN PC COMPLETED!</h3>
+        <div class="pc-preview-card">
+          <div class="pc-art-render">
+            <div class="pc-tower-case">
+              <div class="rgb-strip"></div>
+              <div class="rtx-gpu-glow">MSI RTX 5090</div>
+              <div class="cooler-fans">❄️ LIQUID</div>
+            </div>
+          </div>
+          <div class="pc-specs-list">
+            <div><b>Case:</b> MSI MEG Prospect 700R</div>
+            <div><b>CPU:</b> Intel Core i9-14900KS</div>
+            <div><b>GPU:</b> MSI RTX 5090 Suprim Liquid 24GB</div>
+            <div><b>RAM:</b> 64GB DDR5 RGB</div>
+            <div><b>Storage:</b> 4TB MSI Spatium NVMe</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-group center-btns" style="margin-top: 20px;">
+        <button id="btnNextLevelCongrats" class="btn-red">PROCEED TO NEXT STAGE ►</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top HUD -->
+  <div id="hud" class="hidden">
+    <div class="hud-top">
+      <div class="hud-left">
+        <div class="msi-logo-header small">
+          <span>MSI LV.<b id="hudDragonEvo">1</b></span>
+        </div>
+        <div class="hp-wrap">
+          <div class="bar-head"><span>HP</span><b id="hpText">100/100</b></div>
+          <div class="pixel-bar"><div id="hpFill" class="fill-red"></div></div>
+        </div>
+        <div class="hp-wrap">
+          <div class="bar-head"><span>SHIELD</span><b id="shieldText">0/0</b></div>
+          <div class="pixel-bar"><div id="shieldFill" class="fill-cyan"></div></div>
+        </div>
+        <div class="ammo-box">
+          <span><b id="primaryAbilityLabel">🔥 FIRE: </b><b id="fireAmmo">25</b></span>
+          <span>[2] ⚔️ CLAW: <b>READY</b></span>
+          <span>[3] 💥 NOVA: <b id="ultimateAmmo">3</b></span>
+          <span>🪙 GOLD: <b id="goldText">300</b></span>
+        </div>
+      </div>
+
+      <div class="hud-center">
+        <div class="stage-tag" id="stageLabel">STAGE 1: PC CASE SECTOR</div>
+        <div class="rig-mini" id="rigMiniSummary">TARGET: COLLECT MSI PC CASE &amp; DEFEAT BOSS</div>
+      </div>
+
+      <div class="hud-right">
+        <button id="btnToggleMute" class="hud-btn">🔊 BGM</button>
+        <button id="btnOpenCabinet" class="hud-btn purple">CABINET [I]</button>
+        <button id="btnOpenShop" class="hud-btn gold">SHOP [M]</button>
+        <button id="btnSaveGame" class="hud-btn">SAVE</button>
+      </div>
+    </div>
+
+    <!-- Boss Health Bar -->
+    <div id="bossBarWrap" class="boss-bar hidden">
+      <div class="boss-head">
+        <span id="bossTitle">STAGE BOSS</span>
+        <b id="bossHpLabel">600 / 600</b>
+      </div>
+      <div class="pixel-bar lg"><div id="bossHpFill" class="fill-boss"></div></div>
+    </div>
+
+    <div id="toastMsg" class="toast"></div>
+  </div>
+
+  <!-- Boss Intel Motion Graphic -->
+  <div id="bossIntelModal" class="overlay hidden">
+    <div class="boss-intel-panel">
+      <div class="intel-scanline"></div>
+      <div class="intel-kicker">MSI THREAT INTELLIGENCE // BOSS ENCOUNTER</div>
+      <div class="intel-layout">
+        <div class="intel-portrait-wrap">
+          <div id="intelBossGlyph" class="intel-boss-glyph">☠</div>
+          <div class="intel-threat-ring"></div>
+          <div id="intelThreatLevel" class="intel-threat-level">THREAT 01</div>
+        </div>
+        <div class="intel-copy">
+          <div id="intelStageName" class="intel-stage-name">STAGE 01</div>
+          <h2 id="intelBossName">TROJAN GATEKEEPER</h2>
+          <p id="intelBossLore" class="intel-lore"></p>
+          <div class="intel-grid">
+            <div><span>UNIQUE ABILITY</span><b id="intelAbility"></b></div>
+            <div><span>WEAKNESS</span><b id="intelWeakness"></b></div>
+            <div><span>STOLEN COMPONENT</span><b id="intelStolenPart"></b></div>
+            <div><span>MYTHIC ORIGIN</span><b id="intelMyth"></b></div>
+          </div>
+          <div class="intel-warning"><i></i> BOSS GATE LOCKED — DEFEAT THE THREAT TO RECOVER THE COMPONENT</div>
+          <button id="btnEnterBoss" class="btn-red">ENTER BOSS ARENA ►</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Merchant Shop Modal -->
+  <div id="shopModal" class="overlay hidden">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <div>
+          <div class="msi-logo-header small"><span>MSI ARSENAL MERCHANT</span></div>
+          <h2>UPGRADE DRAGON ABILITIES &amp; STATS</h2>
+        </div>
+        <div class="wallet"><div>GOLD: <b id="shopGold">0</b></div></div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="skills">ABILITIES [1] [2] [3]</button>
+        <button class="tab" data-tab="stats">DRAGON EVOLUTION &amp; HP</button>
+      </div>
+
+      <div id="shopContent" class="shop-grid"></div>
+
+      <div class="modal-footer">
+        <button id="btnCloseShop" class="btn-dark">BACK TO GAME [ESC]</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hardware Showcase Cabinet Modal -->
+  <div id="cabinetModal" class="overlay hidden">
+    <div class="modal-panel wide">
+      <div class="modal-header">
+        <div>
+          <div class="msi-logo-header small"><span>MSI PC BUILD CABINET</span></div>
+          <h2>COLLECTED PC COMPONENTS (1 PER STAGE)</h2>
+        </div>
+        <div class="wallet"><div>BUILT: <b id="cabinetCount">0 / 20</b></div></div>
+      </div>
+
+      <p class="cabinet-sub">Each stage awards a dedicated PC hardware component — starting from the PC Case, Motherboards, RAM, Storage, and evolving small GPUs into the flagship MSI RTX 5090!</p>
+
+      <div id="cabinetGrid" class="cabinet-grid"></div>
+
+      <div class="modal-footer">
+        <button id="btnCloseCabinet" class="btn-dark">CLOSE [I]</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

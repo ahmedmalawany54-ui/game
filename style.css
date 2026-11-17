@@ -1,0 +1,684 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+  user-select: none;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: #06080d;
+  color: #f4f6fb;
+  font-family: 'Rajdhani', sans-serif;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#gameContainer {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background: #0b0e17;
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.95);
+  border: 0;
+}
+
+#gameCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 8, 14, 0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  backdrop-filter: blur(6px);
+}
+
+/* Intro inspired by the supplied MSI Runner reference: full-bleed dragon city, red neon menu rail. */
+#startScreen {
+  justify-content: flex-start;
+  align-items: center;
+  padding: 3vh 5vw;
+  background:
+    linear-gradient(90deg, rgba(3, 4, 9, .96) 0%, rgba(8, 7, 14, .82) 31%, rgba(8, 7, 14, .2) 66%, rgba(3, 4, 9, .52) 100%),
+    url('assets/intro-msi-runner-bg.jpg') center right / cover no-repeat;
+}
+#startScreen .title-box {
+  width: min(590px, 92vw);
+  max-height: 94vh;
+  overflow-y: auto;
+  background: linear-gradient(135deg, rgba(7, 9, 16, .88), rgba(22, 8, 16, .7));
+  border: 0;
+  border-left: 5px solid #e30613;
+  box-shadow: 0 0 38px rgba(227, 6, 19, .28);
+  padding: 24px 28px;
+  clip-path: polygon(0 0, 96% 0, 100% 7%, 100% 93%, 96% 100%, 0 100%);
+}
+#startScreen .btn-red, #startScreen .btn-dark {
+  min-width: 190px;
+  clip-path: polygon(7% 0, 100% 0, 93% 100%, 0 100%);
+  text-transform: uppercase;
+}
+#startScreen .btn-red { box-shadow: 0 0 18px rgba(227, 6, 19, .65), inset 0 -3px rgba(80,0,5,.6); }
+#startScreen .features-grid { grid-template-columns: 1fr; max-height: 190px; overflow: auto; }
+#startScreen .msi-logo-header { box-shadow: 0 0 18px rgba(227, 6, 19, .45); }
+
+.title-box, .modal-panel {
+  width: min(920px, 92%);
+  max-height: 92vh;
+  overflow-y: auto;
+  background: linear-gradient(180deg, #161b29, #0c0f18);
+  border: 3px solid #e30613;
+  box-shadow: 0 0 0 4px #090b10, 0 20px 60px rgba(0, 0, 0, 0.9);
+  padding: 26px;
+}
+
+.center-box {
+  text-align: center;
+}
+
+.congrats-box {
+  border-color: #ffbe3b;
+}
+
+.modal-panel.wide {
+  width: min(1040px, 95%);
+}
+
+.msi-shield-svg {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+.msi-logo-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #e30613;
+  color: #fff;
+  padding: 6px 12px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  width: fit-content;
+  border: 2px solid #fff;
+}
+
+.msi-logo-header.small {
+  padding: 5px 8px;
+  font-size: 8px;
+}
+
+.title-box h1 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(22px, 3.4vw, 38px);
+  margin: 14px 0 8px;
+  color: #fff;
+  text-shadow: 4px 4px 0 #7a0008;
+}
+
+.title-box h1 span {
+  color: #ffbe3b;
+}
+
+.danger-text {
+  color: #ff2a36 !important;
+  text-shadow: 4px 4px 0 #4a0004 !important;
+}
+
+.gold-text {
+  color: #ffbe3b !important;
+  text-shadow: 4px 4px 0 #7a5200 !important;
+}
+
+.subtitle {
+  font-size: 15px;
+  color: #8ee8ff;
+  letter-spacing: 1.2px;
+  margin-bottom: 16px;
+}
+
+.modal-desc {
+  font-size: 16px;
+  color: #cbd5e1;
+  margin-bottom: 20px;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.features-grid div {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 10px 12px;
+  font-size: 14px;
+  line-height: 1.35;
+  color: #d6deed;
+}
+
+.features-grid b {
+  color: #ffbe3b;
+}
+
+.btn-group {
+  display: flex;
+  gap: 14px;
+}
+
+.center-btns {
+  justify-content: center;
+}
+
+.btn-red, .btn-dark {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  padding: 14px 20px;
+  border: 2px solid #fff;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.btn-red {
+  background: #e30613;
+  color: #fff;
+  box-shadow: 0 4px 0 #750007;
+}
+
+.btn-red:hover {
+  background: #ff1927;
+  transform: translateY(-2px);
+}
+
+.btn-dark {
+  background: #1d2436;
+  color: #e2e8f5;
+  border-color: #4f5d7a;
+}
+
+.btn-dark:hover {
+  background: #28324a;
+}
+
+.keys-hint {
+  margin-top: 18px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 13px;
+  color: #a4b0c6;
+}
+
+.keys-hint b {
+  color: #38e8ff;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+}
+
+.congrats-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(255, 190, 59, 0.1);
+  border: 2px solid #ffbe3b;
+  padding: 16px;
+  margin: 16px auto;
+  max-width: 560px;
+  text-align: left;
+}
+
+.part-badge {
+  font-size: 38px;
+  background: #111827;
+  border: 2px solid #38e8ff;
+  padding: 12px;
+}
+
+.congrats-card h3 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  color: #ffbe3b;
+  margin: 0 0 6px;
+}
+
+.congrats-card p {
+  margin: 0;
+  font-size: 14px;
+  color: #e2e8f0;
+}
+
+/* HUD */
+#hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.hud-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 12px 16px;
+  background: linear-gradient(180deg, rgba(6, 8, 14, 0.92), transparent);
+}
+
+.hud-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.hp-wrap {
+  width: 125px;
+}
+
+.bar-head {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  margin-bottom: 4px;
+}
+
+.pixel-bar {
+  height: 12px;
+  background: #191f2e;
+  border: 2px solid #49546e;
+  padding: 1px;
+}
+
+.pixel-bar.lg {
+  height: 16px;
+}
+
+.fill-red { height: 100%; width: 100%; background: #e30613; transition: width 0.15s; }
+.fill-cyan { height: 100%; width: 0%; background: #38e8ff; transition: width 0.15s; }
+.fill-boss { height: 100%; width: 100%; background: linear-gradient(90deg, #a8000b, #ffbe3b); transition: width 0.12s; }
+
+.ammo-box {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: rgba(12, 16, 26, 0.88);
+  border: 1px solid #354059;
+  padding: 6px 10px;
+  font-size: 13px;
+}
+
+.ammo-box b {
+  color: #ffbe3b;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+}
+
+.hud-center {
+  text-align: center;
+}
+
+.stage-tag {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: #ffbe3b;
+  text-shadow: 2px 2px 0 #000;
+}
+
+.rig-mini {
+  margin-top: 5px;
+  background: rgba(12, 16, 26, 0.88);
+  border: 1px solid #38e8ff55;
+  padding: 4px 10px;
+  font-size: 13px;
+  color: #8ee8ff;
+}
+
+.hud-right {
+  display: flex;
+  gap: 8px;
+  pointer-events: auto;
+}
+
+.hud-btn {
+  background: #151b29;
+  color: #fff;
+  border: 2px solid #596785;
+  padding: 9px 11px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  cursor: pointer;
+}
+
+.hud-btn.cyan { border-color: #38e8ff; color: #38e8ff; }
+.hud-btn.gold { border-color: #ffbe3b; color: #ffbe3b; }
+.hud-btn.purple { border-color: #c084fc; color: #c084fc; }
+
+.boss-bar {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(540px, 76%);
+  background: rgba(18, 7, 11, 0.92);
+  border: 2px solid #e30613;
+  padding: 8px 12px;
+}
+
+.boss-head {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: #ffbe3b;
+  margin-bottom: 6px;
+}
+
+.toast {
+  position: absolute;
+  top: 82px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(10, 14, 24, 0.95);
+  border: 2px solid #ffbe3b;
+  color: #fff;
+  padding: 8px 16px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 30;
+}
+
+.toast.show {
+  opacity: 1;
+}
+
+/* MODALS */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #283147;
+  padding-bottom: 12px;
+  margin-bottom: 14px;
+}
+
+.modal-header h2 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 14px;
+  margin: 8px 0 0;
+}
+
+.wallet {
+  text-align: right;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  line-height: 1.7;
+  color: #ffbe3b;
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.tab {
+  flex: 1;
+  background: #121724;
+  border: 2px solid #323d57;
+  color: #9ba7c2;
+  padding: 10px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  cursor: pointer;
+}
+
+.tab.active {
+  background: #331016;
+  border-color: #e30613;
+  color: #fff;
+}
+
+.shop-grid, .cabinet-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  max-height: 44vh;
+  overflow-y: auto;
+}
+
+.cabinet-grid {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.card-item {
+  background: #111623;
+  border: 2px solid #2b354d;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.card-item h4 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  margin: 0;
+  color: #fff;
+}
+
+.card-item p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: #b4c0d8;
+}
+
+.cabinet-slot {
+  background: #0d121d;
+  border: 2px dashed #334155;
+  padding: 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 110px;
+}
+
+.cabinet-slot.collected {
+  border-style: solid;
+  border-color: #38e8ff;
+  background: rgba(56, 232, 255, 0.06);
+}
+
+.cabinet-slot b {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: #ffbe3b;
+}
+
+.cabinet-slot small {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.cabinet-sub {
+  font-size: 14px;
+  color: #94a3b8;
+  margin-bottom: 12px;
+}
+
+.pc-victory {
+  margin-top: 14px;
+  background: rgba(227, 6, 19, 0.12);
+  border: 2px solid #e30613;
+  padding: 16px;
+  text-align: left;
+}
+
+.pc-victory h3 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  color: #ffbe3b;
+  margin: 0 0 6px;
+}
+
+.pc-preview-card {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.pc-art-render {
+  width: 170px;
+  height: 170px;
+  background: #07090f;
+  border: 2px solid #38e8ff;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pc-tower-case {
+  width: 105px;
+  height: 140px;
+  background: #111827;
+  border: 2px solid #4b5563;
+  position: relative;
+  box-shadow: inset 0 0 15px rgba(56, 232, 255, 0.25);
+}
+
+.rgb-strip {
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: 6px;
+  background: linear-gradient(180deg, #e30613, #38e8ff, #ffbe3b);
+}
+
+.rtx-gpu-glow {
+  position: absolute;
+  top: 62px; left: 14px;
+  font-size: 8px;
+  font-family: 'Press Start 2P', monospace;
+  color: #38e8ff;
+}
+
+.cooler-fans {
+  position: absolute;
+  top: 18px; left: 20px;
+  font-size: 9px;
+  color: #ffbe3b;
+}
+
+.pc-specs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.card-btn {
+  background: #e30613;
+  color: #fff;
+  border: 0;
+  padding: 9px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  cursor: pointer;
+}
+
+.card-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.modal-footer {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* BOSS INTELLIGENCE MOTION GRAPHIC */
+.boss-intel-panel {
+  position: relative;
+  width: min(980px, 94%);
+  overflow: hidden;
+  background: radial-gradient(circle at 18% 50%, #24102a 0, #101522 38%, #080b12 100%);
+  border: 2px solid #ffbe3b;
+  box-shadow: 0 0 0 4px #07090f, 0 0 70px rgba(227, 6, 19, .45);
+  padding: 28px;
+  animation: intelIn .42s cubic-bezier(.2,.8,.2,1);
+}
+
+.intel-scanline {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, transparent 0 5px, rgba(56,232,255,.045) 6px 7px);
+  animation: scanMove 5s linear infinite;
+}
+.intel-kicker, .intel-stage-name, .intel-threat-level {
+  position: relative;
+  font-family: 'Press Start 2P', monospace;
+  color: #38e8ff;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+.intel-kicker { border-bottom: 1px solid #38e8ff66; padding-bottom: 12px; }
+.intel-layout { position: relative; display: grid; grid-template-columns: 250px 1fr; gap: 28px; align-items: center; padding-top: 22px; }
+.intel-portrait-wrap { min-height: 280px; display: grid; place-items: center; position: relative; }
+.intel-boss-glyph { font-size: 116px; filter: drop-shadow(0 0 14px #e30613); animation: bossPulse 1.2s ease-in-out infinite; z-index: 2; }
+.intel-threat-ring { position: absolute; width: 205px; height: 205px; border: 2px dashed #e30613; border-radius: 50%; animation: spinRing 9s linear infinite; box-shadow: 0 0 30px #e3061333 inset; }
+.intel-threat-level { color: #ffbe3b; margin-top: 242px; position: absolute; }
+.intel-copy h2 { position: relative; margin: 7px 0 10px; font-family: 'Press Start 2P', monospace; font-size: clamp(18px, 3vw, 30px); color: #fff; text-shadow: 3px 3px #7a0008; }
+.intel-lore { position: relative; color: #d6deed; font-size: 17px; line-height: 1.4; max-width: 650px; }
+.intel-grid { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin: 18px 0; }
+.intel-grid > div { background: rgba(255,255,255,.045); border-left: 3px solid #e30613; padding: 10px; min-height: 58px; }
+.intel-grid span { display: block; color: #8ee8ff; font-family: 'Press Start 2P', monospace; font-size: 7px; margin-bottom: 7px; }
+.intel-grid b { color: #fff; font-size: 15px; }
+.intel-warning { position: relative; color: #ffbe3b; font-family: 'Press Start 2P', monospace; font-size: 8px; line-height: 1.6; margin: 14px 0 18px; }
+.intel-warning i { display: inline-block; width: 8px; height: 8px; background: #e30613; box-shadow: 0 0 10px #e30613; animation: blink 1s steps(2) infinite; }
+@keyframes intelIn { from { opacity: 0; transform: scale(.94) translateY(16px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+@keyframes scanMove { from { transform: translateY(-20px); } to { transform: translateY(20px); } }
+@keyframes bossPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+@keyframes spinRing { to { transform: rotate(360deg); } }
+@keyframes blink { 50% { opacity: .25; } }
+
+@media (max-width: 760px) {
+  .intel-layout { grid-template-columns: 1fr; gap: 10px; }
+  .intel-portrait-wrap { min-height: 135px; }
+  .intel-boss-glyph { font-size: 74px; }
+  .intel-threat-ring { width: 125px; height: 125px; }
+  .intel-threat-level { margin-top: 116px; }
+  .intel-grid { grid-template-columns: 1fr; }
+  .boss-intel-panel { padding: 18px; max-height: 94vh; overflow-y: auto; }
+}
